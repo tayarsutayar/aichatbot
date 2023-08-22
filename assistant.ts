@@ -5,7 +5,7 @@ import { FUNCTIONS_DEFINITION, callFunction } from "./functions";
 const SYSTEM_MESSAGES: ChatMessage[] = [
   {
     role: "system",
-    content: "You are a helpful assistant named Paket.",
+    content: "You are a helpful assistant named BOT BPJS.",
   },
   {
     role: "system",
@@ -28,7 +28,7 @@ export async function assistant(message: Message): Promise<Reply | void> {
       content:
         message?.extendedTextMessage?.text?.replaceAll(
           "@" + PHONE_NUMBER,
-          "Paket"
+          "BOT BPJS"
         ) ?? "",
     }));
     

@@ -4,6 +4,7 @@ import readline from 'readline'
 import makeWASocket, { AnyMessageContent, delay, DisconnectReason, WASocket, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, makeInMemoryStore, proto, useMultiFileAuthState, WAMessageContent, WAMessageKey } from '@whiskeysockets/baileys'
 import MAIN_LOGGER from './logger'
 import { assistant } from './assistant'
+import 'dotenv/config'
 const logger = MAIN_LOGGER.child({})
 logger.level = 'trace'
 
