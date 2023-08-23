@@ -31,12 +31,11 @@ export async function assistant(message: Message): Promise<Reply | void> {
           "BOT BPJS"
         ) ?? "",
     }));
-    
     const text = await chat([...SYSTEM_MESSAGES, ...chats], {
       max_tokens: 500,
       functions_definition: FUNCTIONS_DEFINITION,
       call_function: callFunction,
     }).catch((err) => `[ERROR] ${err}.`);
-    return [{ text }];
+    return [{ text }, { quoted: message }];
   }
 }
