@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "node --inspect -r ts-node/register index.ts"
+    "dev": "node -r ts-node/register index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.33.1",

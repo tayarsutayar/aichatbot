@@ -20,7 +20,7 @@ export async function getMessage(stanzaId: string, jid: string): Promise<Message
 export async function getQuotedMessages(message: Message) {
   const result = [message];
   while (true) {
-    const stanzaId = result.at(0)?.message?.extendedTextMessage?.contextInfo?.stanzaId;
+    const stanzaId = result.at(0)?.message?.extendedTextMessage?.contextInfo?.stanzaId ?? result.at(0)?.message?.locationMessage?.contextInfo?.stanzaId;
     const jid = result.at(0)?.key.remoteJid;
     if (!stanzaId || !jid) break;
     

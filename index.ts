@@ -3,9 +3,12 @@ import makeWASocket, {
 	DisconnectReason, 
 	WASocket, 
 	fetchLatestBaileysVersion, 
+  proto,
 	makeCacheableSignalKeyStore, 
 	makeInMemoryStore, 
 	useMultiFileAuthState, 
+  WAMessageKey,
+  WAMessageContent
 } from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
 import NodeCache from 'node-cache'
@@ -16,11 +19,9 @@ import { assistant } from './assistant'
 import DB from "./db";
 
 const logger = MAIN_LOGGER.child({})
-logger.level = 'info'
+logger.level = 'trace'
 
 const db = new DB();
-
-let doReplies = true
 
 const msgRetryCounterCache = new NodeCache()
 
@@ -52,6 +53,7 @@ const startSocket = async() => {
 			keys: makeCacheableSignalKeyStore(state.keys, logger),
 		},
 		msgRetryCounterCache,
+    getMessage
 	})
 
 	store?.bind(sock.ev)
@@ -79,8 +81,9 @@ const startSocket = async() => {
 				const upsert = events['messages.upsert']
 					for(const msg of upsert.messages) {
 						db.insertMessages(msg)
-						if(upsert.type === 'notify' && !msg.key.fromMe && doReplies) {
+						if(upsert.type === 'notify' && !msg.key.fromMe) {
 							const result = await assistant(msg)
+              await sock!.readMessages([msg.key])
 							if(result) await sendMessageWTyping(result, msg.key.remoteJid!, sock)	
 						}
 					}
@@ -89,6 +92,16 @@ const startSocket = async() => {
 	)
 
 	return sock
+
+  async function getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {
+		if(store) {
+			const msg = await store.loadMessage(key.remoteJid!, key.id!)
+			return msg?.message || undefined
+		}
+
+		// only if store is present
+		return proto.Message.fromObject({})
+	}
 }
 
 startSocket()
