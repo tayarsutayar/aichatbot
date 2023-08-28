@@ -4,7 +4,10 @@ import { WAProto } from "@whiskeysockets/baileys"
 interface Messages {
   key_id: string,
   remote_jid: string,
-  message: WAProto.IWebMessageInfo
+  from_me: boolean,
+  upsert_type: string,
+  message: WAProto.IWebMessageInfo,
+  created_at?: Date
 }
 
 export default class DB {
@@ -19,11 +22,14 @@ export default class DB {
     );
   }
   
-  async insertMessages(message : WAProto.IWebMessageInfo){    
+  async insertMessages(message : WAProto.IWebMessageInfo, upsert_type: string){    
     const newMessage : Messages = {
       key_id: message.key.id ?? '',
       remote_jid: message.key.remoteJid ?? '',
+      from_me: message.key.fromMe ?? false,
+      upsert_type: upsert_type,
       message: message,
+      created_at: new Date(Date.now()),
     } 
     const { error } = await this.client.from('messages').insert(newMessage)
     if(error) console.log(`[ERROR] ${JSON.stringify(error)}.`)
@@ -40,5 +46,23 @@ export default class DB {
     if(!error && data) return data[0]
     console.log(`[ERROR] ${JSON.stringify(error)}.`)
   }
+
+  async isFirstMsg(message : WAProto.IWebMessageInfo) : Promise<boolean>{    
+    let { data } = await this.client
+      .from('messages')
+      .select()
+      .eq('remote_jid', message.key.remoteJid ?? '')
+      .eq('upsert_type', 'notify')
+      .eq('from_me', false)
+      .gte('created_at', (new Date( Date.now() - (1000 * 60 * 5) )).toDateString())
+      .limit(1)
+      
+    if(!(message.message?.extendedTextMessage?.contextInfo?.stanzaId || message.message?.locationMessage?.contextInfo?.stanzaId)
+        && data?.length == 0){
+      return true
+    }
+    return false
+  }
+  
 }
 

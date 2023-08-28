@@ -17,7 +17,7 @@ const SYSTEM_MESSAGES: ChatMessage[] = [
   },
   {
     role: "system",
-    content: "Ask longitude and latitude info when question is about Nearby Topic.",
+    content: "Ask longitude and latitude info when question is about Nearby Location Topic.",
   },
 ];
 

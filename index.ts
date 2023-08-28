@@ -40,6 +40,17 @@ export const sendMessageWTyping = async(reply: Reply, jid: string, sock : WASock
 	await sock.sendMessage(jid, reply[0], reply[1] ?? undefined)
 }
 
+const greetingMessage = (name: string = '') : string => {
+return `Halo Bpk/Ibu ${name}
+Terima kasih telah mengubungi WhatsApp Customer Care Kami
+
+Bagaimana BOT BPJS bisa membantu ?
+
+Dengan BOT BPJS Makin Mudah Makin Cepat
+BPJS Kesehatan 
+Gotong Royong Semua Tertolong`
+}
+
 const startSocket = async() => {
 	const { state, saveCreds } = await useMultiFileAuthState('baileys_auth_info')
 	const { version, isLatest } = await fetchLatestBaileysVersion()
@@ -80,12 +91,14 @@ const startSocket = async() => {
 			if(events['messages.upsert']) {
 				const upsert = events['messages.upsert']
 					for(const msg of upsert.messages) {
-						db.insertMessages(msg)
 						if(upsert.type === 'notify' && !msg.key.fromMe) {
 							const result = await assistant(msg)
-              await sock!.readMessages([msg.key])
+              				await sock!.readMessages([msg.key])
+
+							if(await db.isFirstMsg(msg)) await sendMessageWTyping([{text: greetingMessage(msg.pushName ?? '')}], msg.key.remoteJid!, sock)
 							if(result) await sendMessageWTyping(result, msg.key.remoteJid!, sock)	
 						}
+						db.insertMessages(msg, upsert.type)
 					}
 			}
 		}

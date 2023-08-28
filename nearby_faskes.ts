@@ -43,7 +43,6 @@ export const GET_FASKES_DEF = {
 };
 
 export async function getFaskes({ type, longitude, latitude }: GetFaskes) {
-  console.log('Faskes nih bos')
   const payload = {
     params: {
       sort: {},
