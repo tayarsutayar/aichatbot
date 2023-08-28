@@ -1,5 +1,6 @@
 import { GET_DAFTAR_PERATURAN_DEF, getDaftarPeraturan } from "./jdih";
 import { GET_FASKES_DEF, getFaskes } from "./nearby_faskes";
+import { GET_BPJS_DEF, getBpjs } from "./bpjs";
 
 export type ChatFunction = {
   name: string;
@@ -36,7 +37,7 @@ export const FUNCTIONS_DEFINITION: ChatFunction[] = [
   //     },
   //   },
   // },
-  GET_DAFTAR_PERATURAN_DEF,
+  // GET_DAFTAR_PERATURAN_DEF,
   GET_FASKES_DEF,
 ];
 
@@ -45,6 +46,7 @@ export function callFunction(name: string, args: Record<string, unknown>) {
     return new Date().toLocaleString(args["locale"] as string);
   // if (name === "nearby")
   //   return 'Please Share your current location';
-  if (name === GET_DAFTAR_PERATURAN_DEF.name) return getDaftarPeraturan(args);
+  // if (name === GET_DAFTAR_PERATURAN_DEF.name) return getDaftarPeraturan(args);
+  if (name === GET_BPJS_DEF.name) return getBpjs(args);
   if (name === GET_FASKES_DEF.name) return getFaskes(args);
 }
