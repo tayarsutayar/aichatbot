@@ -19,7 +19,7 @@ import { assistant } from './assistant'
 import DB from "./db";
 
 const logger = MAIN_LOGGER.child({})
-logger.level = 'trace'
+logger.level = 'error'
 
 const db = new DB();
 
@@ -31,24 +31,21 @@ setInterval(() => {
 	store?.writeToFile('./baileys_store_multi.json')
 }, 10_000)
 
-export const sendMessageWTyping = async(reply: Reply, jid: string, sock : WASocket) => {
+export const sendMessageWTyping = async(reply: Reply, jid: string, typing_delay: number, sock : WASocket) => {
 	await sock.presenceSubscribe(jid)
 	await delay(500)
 	await sock.sendPresenceUpdate('composing', jid)
-	await delay(2000)
+	await delay(typing_delay)
+	console.log(typing_delay)
 	await sock.sendPresenceUpdate('paused', jid)
 	await sock.sendMessage(jid, reply[0], reply[1] ?? undefined)
 }
 
 const greetingMessage = (name: string = '') : string => {
 return `Halo Bpk/Ibu ${name}
-Terima kasih telah mengubungi WhatsApp Customer Care Kami
+Saya adalah Bot Pintar yang sudah dilatih untuk menjawab pertanyaan mengenai topik berkaitan dengan BPJS Kesehatan.
 
-Bagaimana BOT BPJS bisa membantu ?
-
-Dengan BOT BPJS Makin Mudah Makin Cepat
-BPJS Kesehatan 
-Gotong Royong Semua Tertolong`
+Silahkan ajukan pertanyaan terkait topik tersebut`
 }
 
 const startSocket = async() => {
@@ -95,8 +92,8 @@ const startSocket = async() => {
 							const result = await assistant(msg)
               				await sock!.readMessages([msg.key])
 
-							if(await db.isFirstMsg(msg)) await sendMessageWTyping([{text: greetingMessage(msg.pushName ?? '')}], msg.key.remoteJid!, sock)
-							if(result) await sendMessageWTyping(result, msg.key.remoteJid!, sock)	
+							// if(await db.isFirstMsg(msg)) await sendMessageWTyping([{text: greetingMessage(msg.pushName ?? '')}], msg.key.remoteJid!, sock)
+							if(result) await sendMessageWTyping(result, msg.key.remoteJid!, String(result[0]).length * 100, sock)	
 						}
 						db.insertMessages(msg, upsert.type)
 					}

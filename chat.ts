@@ -1,3 +1,5 @@
+import { getAnswer } from "./kb";
+
 const CHAT_API_URL = "https://api.openai.com/v1/chat/completions";
 
 export type ChatMessage = {
@@ -58,9 +60,10 @@ async function api(
     },
     body: JSON.stringify({
       messages,
-      functions,
+      functions, 
       model: "gpt-3.5-turbo",
       max_tokens: 100,
+      stream:false,
       ...options,
     }),
   });
@@ -72,16 +75,17 @@ export async function chat(
   options?: ChatOptions & FunctionOptions
 ): Promise<string> {
   if (messages.length > 13) {
-    throw new Error("Too in-depth conversation!");
+    throw new Error("Mohon maaf kami belum bisa merespon pernyataan ini karena kemampuan yang masih terbatas");
   }
+
   const { functions_definition, call_function, ...chatOptions } = options ?? {};
 
   const response = await api(messages, functions_definition ?? [], chatOptions);
-
   const choice = response.choices?.pop();
-  if (!choice) throw new Error("No response choices found.");
-  const message = choice.message;
+  if (!choice) throw new Error("Mohon maaf kami belum bisa merespon pernyataan ini.");
+  const message = choice.message; 
   if (message.function_call) {
+    console.log(["FCall", message])
     const { name, arguments: args } = message.function_call;
     const result = await call_function?.(name, JSON.parse(args));
     messages.push(message);
@@ -89,5 +93,5 @@ export async function chat(
     return chat(messages, options);
   }
   if (message.role === "assistant") return message.content;
-  throw new Error("No assistant reply.");
+  throw new Error("No assistant reply."); 
 }

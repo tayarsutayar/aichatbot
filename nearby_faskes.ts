@@ -9,11 +9,13 @@ const FASKES_API_URL =
 
 const MAP_TYPE: Record<string, string> = {
   "RUMAH SAKIT": "R",
-  PUSKESMAS: "P",
+  "PUSKESMAS": "P",
   "DOKTER PRAKTIK PERORANGAN": "U",
+  "DOKTER PRAKTIK": "U",
   "DOKTER GIGI": "G",
   "KLINIK UTAMA": "S",
   "KLINIK PRATAMA": "B",
+  "KLINIK": "B",
 };
 
 export const GET_FASKES_DEF = {
@@ -76,7 +78,8 @@ export async function getFaskes({ type, longitude, latitude }: GetFaskes) {
         'Nama' : e.nmppk,
         'Alamat' : e.nmjlnppk,
         'Jarak' : e.distance,
-        'Telepon ' : e.telpppk,
+        'Telepon' : e.telpppk,
+        'Link Peta' : `http://www.google.com/maps/place/${e.lat},${e.lng}`,
         'Kamar vvip' : e.vvip,
         'Kamar vip' : e.vip,
         'Kamar utama' : e.utama,
