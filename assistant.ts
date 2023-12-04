@@ -1,28 +1,15 @@
 import { ChatMessage, chat } from "./chat";
 import { Message, Reply, getQuotedMessages } from "./wa";
 import { FUNCTIONS_DEFINITION, callFunction } from "./functions";
-import { getAnswer } from "./kb";
 
 const SYSTEM_MESSAGES: ChatMessage[] = [
   {
     role: "system",
-    content: "You are a helpful assistant named Asisten Pintar BPJS that answer question related to BPJS Services.",
+    content: "You are a helpful assistant named Asistenkeu that answer question related to Ministry of Finance.",
   },
   {
     role: "system",
     content: "Answer in 50 words or less.",
-  },
-  {
-    role: "system",
-    content: "BPJS Services includes FKTP, Faskes, Kesehatan, Hospital, Puskesmas, Membership etc.",
-  },
-  {
-    role: "system",
-    content: "When user ask about nearby healthcare location (e.g. FKTP, Faskes, Rumah Sakit, Puskesmas, Klinik) Ask user to reply the message with their location .",
-  },
-  {
-    role: "system",
-    content: "Prioritize to answer user question related to BPJS using function call named get_knowledge. ",
   }
 ];
 
@@ -44,18 +31,13 @@ export async function assistant(message: Message): Promise<Reply | void> {
       content:
         (message?.extendedTextMessage?.text?.replaceAll(
           "@" + PHONE_NUMBER,
-          "Asisten Pintar BPJS"
+          "Asistenkeu"
         ) ?? "") + 
         (isPersonal ? (message?.conversation?.replaceAll(
           "@" + PHONE_NUMBER,
-          "Asisten Pintar BPJS"
-        ) ?? "") : "") + 
-        (message?.locationMessage ? 
-          `Latitude : ${message?.locationMessage?.degreesLatitude} 
-          Longitude : ${message?.locationMessage?.degreesLongitude}` : ""),
+          "Asistenkeu"
+        ) ?? "") : ""),
     }));
-
-
  
       const text = await chat([...SYSTEM_MESSAGES, ...chats], {
         max_tokens: 500,

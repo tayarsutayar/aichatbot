@@ -1,5 +1,3 @@
-import { getAnswer } from "./kb";
-
 const CHAT_API_URL = "https://api.openai.com/v1/chat/completions";
 
 export type ChatMessage = {

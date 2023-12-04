@@ -1,5 +1,4 @@
-import { GET_KB_DEF, getAnswer } from "./kb"; 
-import { GET_FASKES_DEF, getFaskes } from "./nearby_faskes"; 
+import { GET_DAFTAR_PERATURAN_DEF, getDaftarPeraturan } from "./jdih";
 
 export type ChatFunction = {
   name: string;
@@ -22,12 +21,11 @@ export const FUNCTIONS_DEFINITION: ChatFunction[] = [
       },
     },
   },  
-  GET_KB_DEF, 
-  GET_FASKES_DEF
+  GET_DAFTAR_PERATURAN_DEF,
 ];
 
 export function callFunction(name: string, args: Record<string, unknown>) {
-  if (name === "now") return new Date().toLocaleString(args["locale"] as string);
-  if (name === GET_FASKES_DEF.name) return getFaskes(args) 
-  if (name === GET_KB_DEF.name) return getAnswer(args); 
+  if (name === "now")
+    return new Date().toLocaleString(args["locale"] as string);
+  if (name === GET_DAFTAR_PERATURAN_DEF.name) return getDaftarPeraturan(args);
 }
