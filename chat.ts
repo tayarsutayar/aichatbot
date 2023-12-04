@@ -83,7 +83,6 @@ export async function chat(
   if (!choice) throw new Error("Mohon maaf kami belum bisa merespon pernyataan ini.");
   const message = choice.message; 
   if (message.function_call) {
-    console.log(["FCall", message])
     const { name, arguments: args } = message.function_call;
     const result = await call_function?.(name, JSON.parse(args));
     messages.push(message);

@@ -9,7 +9,7 @@ const SYSTEM_MESSAGES: ChatMessage[] = [
   },
   {
     role: "system",
-    content: "Answer in 50 words or less.",
+    content: "Answer in 100 words or less.",
   }
 ];
 
